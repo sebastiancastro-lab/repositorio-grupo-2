@@ -30,13 +30,19 @@ class Dispositivo(models.Model):
     def __str__(self):
         return f"{self.nombre} ({self.numero_serie})"
 
-class RegistroSigno(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
-    tipo_signo = models.ForeignKey(TipoSigno, on_delete=models.CASCADE)
-    dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE)
-    valor_medido = models.FloatField()
-    fecha_hora = models.DateTimeField()
-    responsable = models.CharField(max_length=100)
+class RegistroSignoSerializer(serializers.ModelSerializer):
+    paciente_detalle = PacienteSerializer(source='paciente', read_only=True)
+    tipo_signo_detalle = TipoSignoSerializer(source='tipo_signo', read_only=True)
+    dispositivo_detalle = DispositivoSerializer(source='dispositivo', read_only=True)
 
-    def __str__(self):
-        return f"Registro {self.id} - Paciente: {self.paciente.documento}"
+    class Meta:
+        model = RegistroSigno
+        fields = '__all__'
+
+    def validate(self, data):
+        dispositivo = data.get('dispositivo', getattr(self.instance, 'dispositivo', None))
+        if dispositivo and dispositivo.estado != 'activo':
+            raise serializers.ValidationError(
+                "No se puede registrar un signo con un dispositivo que no está activo."
+            )
+        return data
