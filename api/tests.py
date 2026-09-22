@@ -121,3 +121,8 @@ class RegistroSignoTests(APITestCase):
         response = self.client.delete(f'/api/registros/{self.registro.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(RegistroSigno.objects.filter(id=self.registro.id).exists())
+
+    def test_eliminar_registro(self):
+        response = self.client.delete(f'/api/registros/{self.registro.id}/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(RegistroSigno.objects.filter(id=self.registro.id).exists())
