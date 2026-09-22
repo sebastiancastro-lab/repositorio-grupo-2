@@ -12,7 +12,7 @@ class Paciente(models.Model):
         verbose_name = "Paciente"
         verbose_name_plural = "Pacientes"
         db_table = "pacientes"
-        
+
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
 
@@ -23,7 +23,7 @@ class TipoSigno(models.Model):
     valor_max_normal = models.FloatField()
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.unidad_medida})"
 
     class Meta:
         verbose_name = "Tipo de Signo"
@@ -40,11 +40,12 @@ class Dispositivo(models.Model):
         return f"{self.nombre} ({self.numero_serie})"
 
 class RegistroSigno(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='registros')
-    tipo_signo = models.ForeignKey(TipoSigno, on_delete=models.CASCADE, related_name='registros')
-    dispositivo = models.ForeignKey(Dispositivo, on_delete=models.CASCADE, related_name='registros')
-    valor = models.FloatField()
+    paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE, related_name='registros')
+    tipo_signo = models.ForeignKey('TipoSigno', on_delete=models.CASCADE, related_name='registros')
+    dispositivo = models.ForeignKey('Dispositivo', on_delete=models.CASCADE, related_name='registros')
+    valor_medido = models.DecimalField(max_digits=6, decimal_places=2)
     fecha_hora = models.DateTimeField(auto_now_add=True)
+    responsable = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.tipo_signo.nombre}: {self.valor} ({self.paciente.nombres})"
+        return f"{self.paciente.documento} - {self.tipo_signo}: {self.valor_medido}"
