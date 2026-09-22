@@ -8,7 +8,7 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'pacientes', PacienteViewSet)
+router.register(r'pacientes', PacienteViewSet, basename='paciente')
 router.register(r'tipos-signo', TipoSignoViewSet)
 router.register(r'dispositivos', DispositivoViewSet)
 router.register(r'registros-signo', RegistroSignoViewSet)
