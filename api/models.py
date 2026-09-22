@@ -29,9 +29,6 @@ class TipoSigno(models.Model):
         verbose_name = "Tipo de Signo"
         verbose_name_plural = "Tipos de Signo"
 
-    class Meta:
-        verbose_name = "Tipo de Signo"
-        verbose_name_plural = "Tipos de Signo"
 
 class Dispositivo(models.Model):
     nombre = models.CharField(max_length=100)
