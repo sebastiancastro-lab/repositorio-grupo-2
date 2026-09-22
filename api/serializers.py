@@ -18,12 +18,18 @@ class DispositivoSerializer(serializers.ModelSerializer):
 
 
 class RegistroSignoSerializer(serializers.ModelSerializer):
-    # Relaciones anidadas para lectura completa (Read/GET)
     paciente_detalle = PacienteSerializer(source='paciente', read_only=True)
     tipo_signo_detalle = TipoSignoSerializer(source='tipo_signo', read_only=True)
     dispositivo_detalle = DispositivoSerializer(source='dispositivo', read_only=True)
 
     class Meta:
         model = RegistroSigno
-        fields = '__all__'       
-        
+        fields = '__all__'
+
+    def validate(self, data):
+        dispositivo = data.get('dispositivo', getattr(self.instance, 'dispositivo', None))
+        if dispositivo and dispositivo.estado != 'activo':
+            raise serializers.ValidationError(
+                "No se puede registrar un signo con un dispositivo que no está activo."
+            )
+        return data
