@@ -8,6 +8,11 @@ class Paciente(models.Model):
     genero = models.CharField(max_length=10, verbose_name="Género")
     eps = models.CharField(max_length=100, verbose_name="EPS")
 
+    class Meta:
+        verbose_name = "Paciente"
+        verbose_name_plural = "Pacientes"
+        db_table = "pacientes"
+        
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
 

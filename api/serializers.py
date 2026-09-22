@@ -4,7 +4,8 @@ from .models import Paciente, TipoSigno, Dispositivo, RegistroSigno
 class PacienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paciente
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ['id', 'documento', 'nombres', 'apellidos', 'edad', 'genero', 'eps']
 
 class TipoSignoSerializer(serializers.ModelSerializer):
     class Meta:
