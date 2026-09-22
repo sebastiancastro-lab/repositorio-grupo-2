@@ -23,7 +23,11 @@ class TipoSigno(models.Model):
     valor_max_normal = models.FloatField()
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.unidad_medida})"
+
+    class Meta:
+        verbose_name = "Tipo de Signo"
+        verbose_name_plural = "Tipos de Signo"
 
     class Meta:
         verbose_name = "Tipo de Signo"
