@@ -12,13 +12,17 @@ class Paciente(models.Model):
         return f"{self.nombres} {self.apellidos}"
 
 class TipoSigno(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True)
     unidad_medida = models.CharField(max_length=20)
     valor_min_normal = models.FloatField()
     valor_max_normal = models.FloatField()
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.unidad_medida})"
+
+    class Meta:
+        verbose_name = "Tipo de Signo"
+        verbose_name_plural = "Tipos de Signo"
 
 class Dispositivo(models.Model):
     nombre = models.CharField(max_length=100)
@@ -30,19 +34,13 @@ class Dispositivo(models.Model):
     def __str__(self):
         return f"{self.nombre} ({self.numero_serie})"
 
-class RegistroSignoSerializer(serializers.ModelSerializer):
-    paciente_detalle = PacienteSerializer(source='paciente', read_only=True)
-    tipo_signo_detalle = TipoSignoSerializer(source='tipo_signo', read_only=True)
-    dispositivo_detalle = DispositivoSerializer(source='dispositivo', read_only=True)
+class RegistroSigno(models.Model):
+    paciente = models.ForeignKey('Paciente', on_delete=models.CASCADE, related_name='registros')
+    tipo_signo = models.ForeignKey('TipoSigno', on_delete=models.CASCADE)
+    dispositivo = models.ForeignKey('Dispositivo', on_delete=models.CASCADE)
+    valor_medido = models.DecimalField(max_digits=6, decimal_places=2)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    responsable = models.CharField(max_length=100)
 
-    class Meta:
-        model = RegistroSigno
-        fields = '__all__'
-
-    def validate(self, data):
-        dispositivo = data.get('dispositivo', getattr(self.instance, 'dispositivo', None))
-        if dispositivo and dispositivo.estado != 'activo':
-            raise serializers.ValidationError(
-                "No se puede registrar un signo con un dispositivo que no está activo."
-            )
-        return data
+    def __str__(self):
+        return f"{self.paciente.documento} - {self.tipo_signo}: {self.valor_medido}"
