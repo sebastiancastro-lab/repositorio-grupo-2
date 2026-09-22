@@ -1,12 +1,12 @@
 from django.db import models
 
 class Paciente(models.Model):
-    documento = models.CharField(max_length=20, unique=True)
-    nombres = models.CharField(max_length=100)
-    apellidos = models.CharField(max_length=100)
-    edad = models.IntegerField()
-    genero = models.CharField(max_length=10)
-    eps = models.CharField(max_length=100)
+    documento = models.CharField(max_length=20, unique=True, verbose_name="Documento de Identidad")
+    nombres = models.CharField(max_length=100, verbose_name="Nombres")
+    apellidos = models.CharField(max_length=100, verbose_name="Apellidos")
+    edad = models.IntegerField(verbose_name="Edad")
+    genero = models.CharField(max_length=10, verbose_name="Género")
+    eps = models.CharField(max_length=100, verbose_name="EPS")
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
