@@ -12,13 +12,17 @@ class Paciente(models.Model):
         return f"{self.nombres} {self.apellidos}"
 
 class TipoSigno(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True)
     unidad_medida = models.CharField(max_length=20)
     valor_min_normal = models.FloatField()
     valor_max_normal = models.FloatField()
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        verbose_name = "Tipo de Signo"
+        verbose_name_plural = "Tipos de Signo"
 
 class Dispositivo(models.Model):
     nombre = models.CharField(max_length=100)
