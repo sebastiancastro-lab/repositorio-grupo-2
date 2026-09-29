@@ -1,0 +1,62 @@
+[
+    {
+      "model": "api.paciente",
+      "pk": 1,
+      "fields": {
+        "documento": "1017123456",
+        "nombres": "Lizeth",
+        "apellidos": "Giraldo Zuluaga",
+        "edad": 45,
+        "genero": "Femenino",
+        "eps": "Sura"
+      }
+    },
+    {
+      "model": "api.paciente",
+      "pk": 2,
+      "fields": {
+        "documento": "1020987654",
+        "nombres": "Juan Sebastián",
+        "apellidos": "Castro Gonzalez",
+        "edad": 32,
+        "genero": "Masculino",
+        "eps": "Sanitas"
+      }
+    },
+    {
+      "model": "api.paciente",
+      "pk": 3,
+      "fields": {
+        "documento": "9876543210",
+        "nombres": "Paula Andrea",
+        "apellidos": "Cano",
+        "edad": 60,
+        "genero": "Femenino",
+        "eps": "Sura"
+      }
+    },
+    {
+      "model": "api.paciente",
+      "pk": 4,
+      "fields": {
+        "documento": "1035456789",
+        "nombres": "Juan",
+        "apellidos": "Sañudo Torres",
+        "edad": 28,
+        "genero": "Femenino",
+        "eps": "Savia Salud"
+      }
+    },
+    {
+      "model": "api.paciente",
+      "pk": 5,
+      "fields": {
+        "documento": "7123456789",
+        "nombres": "Luis Bernardo",
+        "apellidos": "Duarte Pérez",
+        "edad": 52,
+        "genero": "Masculino",
+        "eps": "Nueva EPS"
+      }
+    }
+  ]
