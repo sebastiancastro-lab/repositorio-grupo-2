@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoreo de Signos Vitales</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Reglas CSS nativas para asegurar bordes y separación legible */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+        }
+        td {
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-teal-700 text-white p-4 shadow-lg border-b border-teal-800">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                🏥 Sistema de Monitoreo de Signos Vitales
+            </h1>
+            <span class="text-xs bg-teal-800 border border-teal-600 px-3 py-1 rounded-full text-teal-100 font-medium">
+                🟢 API Conectada
+            </span>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-6">
+        <!-- Navegación por Pestañas -->
+        <div class="flex border-b border-slate-300 mb-6 bg-white rounded-t-xl shadow-sm overflow-hidden">
+            <button onclick="switchTab('pacientes')" id="tab-pacientes" class="px-6 py-3.5 font-semibold text-teal-700 border-b-2 border-teal-700 bg-teal-50/50 transition-all">Pacientes</button>
+            <button onclick="switchTab('tipos-signo')" id="tab-tipos-signo" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Tipos de Signo</button>
+            <button onclick="switchTab('dispositivos')" id="tab-dispositivos" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Dispositivos</button>
+            <button onclick="switchTab('registros-signo')" id="tab-registros-signo" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Registros de Signos</button>
+        </div>
+
+        <!-- Contenedor Principal de Tablas -->
+        <div class="bg-white p-6 rounded-b-xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 id="section-title" class="text-xl font-bold text-slate-800 uppercase tracking-wide">Listado de Pacientes</h2>
+                    <p class="text-xs text-slate-500 mt-1">Gestión centralizada de información en tiempo real</p>
+                </div>
+                <button onclick="openModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 shadow-sm transition-all">
+                    <span>+</span> Nuevo Registro
+                </button>
+            </div>
+
+            <!-- Tabla General con Bordes Explícitos -->
+            <div class="overflow-x-auto rounded-lg border border-slate-300 shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr id="table-head">
+                            <!-- Columnas dinámicas -->
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="text-sm">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventana Modal de Formulario -->
+    <div id="modal" style="display: none;" class="modal-overlay p-4">
+        <div class="bg-white rounded-xl p-6 max-w-lg w-full shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800">Formulario</h3>
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+            </div>
+            
+            <form id="dynamic-form" onsubmit="handleSubmit(event)" class="space-y-4">
+                <div id="form-fields" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                    <!-- Campos inyectados dinámicamente -->
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all">Cancelar</button>
+                    <button type="submit" id="btn-save" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center gap-2">
+                        <span>Guardar Datos</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000/api";
+        let currentTab = "pacientes";
+        let editId = null;
+        let tiposSignoMap = {}; 
+
+        const schemas = {
+            'pacientes': {
+                cols: ['ID', 'Documento', 'Nombres', 'Apellidos', 'Edad', 'Género', 'EPS', 'Acciones'],
+                fields: [
+                    { name: 'documento', label: 'Número de Documento', type: 'number_only', required: true },
+                    { name: 'nombres', label: 'Nombres', type: 'letters_only', required: true },
+                    { name: 'apellidos', label: 'Apellidos', type: 'letters_only', required: true },
+                    { name: 'edad', label: 'Edad (años)', type: 'number_only', required: true },
+                    { name: 'genero', label: 'Género', type: 'select_static', options: ['Masculino', 'Femenino', 'Otro'], required: true },
+                    { name: 'eps', label: 'EPS', type: 'text', required: true }
+                ]
+            },
+            'tipos-signo': {
+                cols: ['ID', 'Nombre de Signo', 'Unidad de Medida', 'Mínimo Normal', 'Máximo Normal', 'Acciones'],
+                fields: [
+                    { name: 'nombre', label: 'Nombre del Signo Vital', type: 'letters_only', required: true },
+                    { name: 'unidad_medida', label: 'Unidad de Medida (ej. mmHg, °C, bpm)', type: 'text', required: true },
+                    { name: 'valor_min_normal', label: 'Valor Mínimo Normal', type: 'decimal', required: true },
+                    { name: 'valor_max_normal', label: 'Valor Máximo Normal', type: 'decimal', required: true }
+                ]
+            },
+            'dispositivos': {
+                cols: ['ID', 'Nombre Dispositivo', 'Marca', 'Modelo', 'N° Serie', 'Estado', 'Acciones'],
+                fields: [
+                    { name: 'nombre', label: 'Nombre del Dispositivo', type: 'text', required: true },
+                    { name: 'marca', label: 'Marca', type: 'text', required: true },
+                    { name: 'modelo', label: 'Modelo', type: 'text', required: true },
+                    { name: 'numero_serie', label: 'Número de Serie', type: 'text', required: true },
+                    { name: 'estado', label: 'Estado', type: 'select_static', options: ['Disponible', 'En uso', 'Mantenimiento', 'Inactivo'], required: true }
+                ]
+            },
+            'registros-signo': {
+                cols: ['ID', 'Paciente', 'Tipo Signo', 'Dispositivo', 'Valor Medido', 'Rango de Referencia', 'Estado', 'Fecha y Hora', 'Acciones'],
+                fields: [
+                    { name: 'paciente', label: 'Seleccionar Paciente Existente', type: 'select_api', endpoint: 'pacientes', displayKey: (item) => `${item.nombres} ${item.apellidos} - Doc: ${item.documento}`, required: true },
+                    { name: 'tipo_signo', label: 'Seleccionar Signo Vital', type: 'select_api', endpoint: 'tipos-signo', displayKey: (item) => `${item.nombre} (${item.unidad_medida})`, required: true },
+                    { name: 'dispositivo', label: 'Seleccionar Dispositivo', type: 'select_api', endpoint: 'dispositivos', displayKey: (item) => `${item.nombre} [${item.marca} - ${item.numero_serie}]`, required: true },
+                    { name: 'valor', label: 'Valor Medido', type: 'decimal', required: true }
+                ]
+            }
+        };
+
+        function switchTab(tab) {
+            closeModal();
+            currentTab = tab;
+            
+            document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+                btn.className = "px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all";
+            });
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.className = "px-6 py-3.5 font-semibold text-teal-700 border-b-2 border-teal-700 bg-teal-50/50 transition-all";
+            }
+            
+            document.getElementById('section-title').innerText = `Listado de ${tab.replace('-', ' ')}`;
+            loadData();
+        }
+
+        async function loadData() {
+            try {
+                // Precargamos tipos-signo para garantizar comparaciones exactas
+                if (currentTab === 'registros-signo' || currentTab === 'tipos-signo') {
+                    try {
+                        const tRes = await fetch(`${API_URL}/tipos-signo/`);
+                        if (tRes.ok) {
+                            const tData = await tRes.json();
+                            tiposSignoMap = {};
+                            tData.forEach(t => tiposSignoMap[t.id] = t);
+                        }
+                    } catch (e) {
+                        console.warn("No se pudo cargar el catálogo de signos", e);
+                    }
+                }
+
+                const res = await fetch(`${API_URL}/${currentTab}/`);
+                if (!res.ok) throw new Error("Error al obtener datos");
+                const data = await res.json();
+                
+                const thead = document.getElementById('table-head');
+                thead.innerHTML = schemas[currentTab].cols.map(c => `<th class="border border-slate-300 p-3.5 font-bold text-slate-700 uppercase bg-slate-100 text-xs">${c}</th>`).join('');
+
+                const tbody = document.getElementById('table-body');
+                if (!Array.isArray(data) || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="${schemas[currentTab].cols.length}" class="p-8 text-center text-slate-400 italic">No existen registros guardados.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map(item => `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3.5 font-mono text-xs text-slate-500 font-bold border border-slate-200">#${item.id}</td>
+                        ${renderRowCells(item)}
+                        <td class="p-3.5 border border-slate-200">
+                            <div class="flex gap-2">
+                                <button onclick="openModal(${item.id})" class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-xs font-medium shadow-sm transition-all">Editar</button>
+                                <button onclick="deleteItem(${item.id})" class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-medium shadow-sm transition-all">Eliminar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Error al cargar datos:", err);
+            }
+        }
+
+        function renderRowCells(item) {
+            if (currentTab === 'pacientes') {
+                return `
+                    <td class="p-3.5 font-mono text-xs text-slate-700 border border-slate-200">${item.documento}</td>
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombres}</td>
+                    <td class="p-3.5 text-slate-700 border border-slate-200">${item.apellidos}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.edad} años</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.genero}</td>
+                    <td class="p-3.5 border border-slate-200"><span class="bg-teal-50 text-teal-700 font-medium px-2 py-1 rounded border border-teal-200 text-xs">${item.eps}</span></td>`;
+            } else if (currentTab === 'tipos-signo') {
+                return `
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombre}</td>
+                    <td class="p-3.5 font-mono text-xs text-teal-700 font-bold border border-slate-200 bg-teal-50/30">${item.unidad_medida}</td>
+                    <td class="p-3.5 text-slate-700 font-medium border border-slate-200 text-center">${item.valor_min_normal}</td>
+                    <td class="p-3.5 text-slate-700 font-medium border border-slate-200 text-center">${item.valor_max_normal}</td>`;
+            } else if (currentTab === 'dispositivos') {
+                return `
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombre}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.marca}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.modelo}</td>
+                    <td class="p-3.5 font-mono text-xs text-slate-500 border border-slate-200">${item.numero_serie}</td>
+                    <td class="p-3.5 border border-slate-200"><span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-xs border border-slate-300">${item.estado}</span></td>`;
+            } else if (currentTab === 'registros-signo') {
+                const pac = item.paciente_detalle ? `${item.paciente_detalle.nombres} ${item.paciente_detalle.apellidos}` : `Paciente #${item.paciente}`;
+                const tipoObj = item.tipo_signo_detalle || tiposSignoMap[item.tipo_signo];
+                const tipoNombre = tipoObj ? tipoObj.nombre : `Signo #${item.tipo_signo}`;
+                const disp = item.dispositivo_detalle ? item.dispositivo_detalle.nombre : `Dispositivo #${item.dispositivo}`;
+                const fecha = item.fecha_hora ? new Date(item.fecha_hora).toLocaleString() : 'N/A';
+
+                let unidad = tipoObj ? tipoObj.unidad_medida : '';
+                let rangoStr = 'N/A';
+                let estadoBadge = '<span class="bg-slate-100 text-slate-500 font-medium text-xs px-2 py-1 rounded">Sin Ref.</span>';
+
+                if (tipoObj && tipoObj.valor_min_normal !== undefined && tipoObj.valor_max_normal !== undefined) {
+                    const min = tipoObj.valor_min_normal;
+                    const max = tipoObj.valor_max_normal;
+                    rangoStr = `${min} - ${max} ${unidad}`;
+
+                    const val = Number(item.valor);
+                    if (val >= min && val <= max) {
+                        estadoBadge = '<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1">🟢 Normal</span>';
+                    } else {
+                        estadoBadge = '<span class="bg-rose-100 text-rose-800 border border-rose-300 font-bold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1">🔴 Fuera de rango</span>';
+                    }
+                }
+
+                return `
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${pac}</td>
+                    <td class="p-3.5 text-slate-700 border border-slate-200">${tipoNombre}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${disp}</td>
+                    <td class="p-3.5 font-bold text-teal-800 text-base border border-slate-200 bg-teal-50/30">${item.valor} <span class="text-xs font-normal text-teal-600">${unidad}</span></td>
+                    <td class="p-3.5 font-mono text-xs text-slate-600 border border-slate-200">${rangoStr}</td>
+                    <td class="p-3.5 border border-slate-200">${estadoBadge}</td>
+                    <td class="p-3.5 text-xs text-slate-500 font-mono border border-slate-200">${fecha}</td>`;
+            }
+        }
+
+        async function openModal(id = null) {
+            editId = id;
+            document.getElementById('modal-title').innerText = id ? `Editar Registro en ${currentTab.replace('-', ' ')}` : `Nuevo Registro en ${currentTab.replace('-', ' ')}`;
+            const fieldsContainer = document.getElementById('form-fields');
+            fieldsContainer.innerHTML = `<p class="text-xs text-slate-400 italic p-2">Cargando opciones...</p>`;
+
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+
+            let itemData = {};
+            if (id) {
+                const res = await fetch(`${API_URL}/${currentTab}/${id}/`);
+                itemData = await res.json();
+            }
+
+            let fieldsHTML = '';
+
+            for (const f of schemas[currentTab].fields) {
+                const val = itemData[f.name] !== undefined ? itemData[f.name] : '';
+
+                if (f.type === 'letters_only') {
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <input type="text" id="field-${f.name}" value="${val}" 
+                                oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g, '')"
+                                placeholder="Solo letras" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
+                        </div>`;
+                } 
+                else if (f.type === 'number_only') {
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <input type="text" id="field-${f.name}" value="${val}" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                placeholder="Solo números enteros" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
+                        </div>`;
+                }
+                else if (f.type === 'decimal') {
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <input type="number" step="any" id="field-${f.name}" value="${val}" 
+                                placeholder="Ej. 36.5" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
+                        </div>`;
+                }
+                else if (f.type === 'select_static') {
+                    const opts = f.options.map(o => `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`).join('');
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <select id="field-${f.name}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm bg-white focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''}>
+                                <option value="" disabled ${!val ? 'selected' : ''}>-- Seleccione una opción --</option>
+                                ${opts}
+                            </select>
+                        </div>`;
+                }
+                else if (f.type === 'select_api') {
+                    const apiRes = await fetch(`${API_URL}/${f.endpoint}/`);
+                    const apiData = await apiRes.json();
+                    
+                    const opts = apiData.map(item => `
+                        <option value="${item.id}" ${val === item.id ? 'selected' : ''}>
+                            ${f.displayKey(item)}
+                        </option>
+                    `).join('');
+
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <select id="field-${f.name}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm bg-white focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''}>
+                                <option value="" disabled ${!val ? 'selected' : ''}>-- Seleccione de la lista existente --</option>
+                                ${opts}
+                            </select>
+                        </div>`;
+                }
+                else {
+                    fieldsHTML += `
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
+                            <input type="text" id="field-${f.name}" value="${val}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
+                        </div>`;
+                }
+            }
+
+            fieldsContainer.innerHTML = fieldsHTML;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            document.getElementById('dynamic-form').reset();
+            editId = null;
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const btnSave = document.getElementById('btn-save');
+            
+            const payload = {};
+            let isFormValid = true;
+
+            schemas[currentTab].fields.forEach(f => {
+                const el = document.getElementById(`field-${f.name}`);
+                const rawVal = el ? el.value.trim() : '';
+
+                if (f.required && !rawVal) {
+                    isFormValid = false;
+                }
+
+                if (f.type === 'number_only' || f.type === 'select_api') {
+                    payload[f.name] = rawVal ? Number(rawVal) : null;
+                } else if (f.type === 'decimal') {
+                    payload[f.name] = rawVal ? parseFloat(rawVal) : null;
+                } else {
+                    payload[f.name] = rawVal;
+                }
+            });
+
+            if (!isFormValid) {
+                alert("⚠️ Por favor completa todos los campos obligatorios antes de guardar.");
+                return;
+            }
+
+            btnSave.disabled = true;
+            btnSave.innerText = "Guardando...";
+
+            const url = editId ? `${API_URL}/${currentTab}/${editId}/` : `${API_URL}/${currentTab}/`;
+            const method = editId ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    alert("⚠️ Error de Validación en Django:\n\n" + JSON.stringify(errorData, null, 2));
+                    return;
+                }
+
+                closeModal();
+                loadData();
+            } catch (err) {
+                alert("❌ No se pudo conectar con el servidor Django. Verifica que esté activo.");
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerText = "Guardar Datos";
+            }
+        }
+
+        async function deleteItem(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este registro permanentemente?')) {
+                await fetch(`${API_URL}/${currentTab}/${id}/`, { method: 'DELETE' });
+                loadData();
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
