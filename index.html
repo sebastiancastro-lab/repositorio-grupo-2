@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,66 +7,40 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Reglas CSS nativas para asegurar bordes y separación legible */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th {
-            background-color: #f1f5f9;
-            color: #334155;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            padding: 12px 16px;
-            border: 1px solid #cbd5e1;
-            text-align: left;
+            background-color: #f1f5f9; color: #334155; font-weight: 700; text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 0.05em; padding: 12px 16px;
+            border: 1px solid #cbd5e1; text-align: left;
         }
-        td {
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            vertical-align: middle;
-        }
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
+        td { padding: 12px 16px; border: 1px solid #e2e8f0; vertical-align: middle; }
+        tr:nth-child(even) { background-color: #f8fafc; }
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(4px);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
+            z-index: 50; align-items: center; justify-content: center;
         }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
 
-    <!-- Header -->
     <header class="bg-teal-700 text-white p-4 shadow-lg border-b border-teal-800">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                🏥 Sistema de Monitoreo de Signos Vitales
-            </h1>
-            <span class="text-xs bg-teal-800 border border-teal-600 px-3 py-1 rounded-full text-teal-100 font-medium">
-                🟢 API Conectada
+            <h1 class="text-xl font-bold flex items-center gap-2">🏥 Sistema de Monitoreo de Signos Vitales</h1>
+            <span id="api-status" class="text-xs bg-teal-800 border border-teal-600 px-3 py-1 rounded-full text-teal-100 font-medium">
+                ⏳ Conectando...
             </span>
         </div>
     </header>
 
     <div class="container mx-auto p-6">
-        <!-- Navegación por Pestañas -->
         <div class="flex border-b border-slate-300 mb-6 bg-white rounded-t-xl shadow-sm overflow-hidden">
             <button onclick="switchTab('pacientes')" id="tab-pacientes" class="px-6 py-3.5 font-semibold text-teal-700 border-b-2 border-teal-700 bg-teal-50/50 transition-all">Pacientes</button>
             <button onclick="switchTab('tipos-signo')" id="tab-tipos-signo" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Tipos de Signo</button>
             <button onclick="switchTab('dispositivos')" id="tab-dispositivos" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Dispositivos</button>
-            <button onclick="switchTab('registros-signo')" id="tab-registros-signo" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Registros de Signos</button>
+            <button onclick="switchTab('registros')" id="tab-registros" class="px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all">Registros de Signos</button>
         </div>
 
-        <!-- Contenedor Principal de Tablas -->
         <div class="bg-white p-6 rounded-b-xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -78,35 +52,24 @@
                 </button>
             </div>
 
-            <!-- Tabla General con Bordes Explícitos -->
             <div class="overflow-x-auto rounded-lg border border-slate-300 shadow-sm">
                 <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr id="table-head">
-                            <!-- Columnas dinámicas -->
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="text-sm">
-                        <!-- Filas dinámicas -->
-                    </tbody>
+                    <thead><tr id="table-head"></tr></thead>
+                    <tbody id="table-body" class="text-sm"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Ventana Modal de Formulario -->
     <div id="modal" style="display: none;" class="modal-overlay p-4">
         <div class="bg-white rounded-xl p-6 max-w-lg w-full shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
                 <h3 id="modal-title" class="text-lg font-bold text-slate-800">Formulario</h3>
                 <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            
+
             <form id="dynamic-form" onsubmit="handleSubmit(event)" class="space-y-4">
-                <div id="form-fields" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
-                    <!-- Campos inyectados dinámicamente -->
-                </div>
-                
+                <div id="form-fields" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"></div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all">Cancelar</button>
                     <button type="submit" id="btn-save" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center gap-2">
@@ -121,10 +84,17 @@
         const API_URL = "http://127.0.0.1:8000/api";
         let currentTab = "pacientes";
         let editId = null;
-        let tiposSignoMap = {}; 
+
+        // Estados de dispositivo: deben coincidir con Dispositivo.ESTADOS del backend.
+        const ESTADOS_DISPOSITIVO = [
+            { value: 'activo', label: 'Activo' },
+            { value: 'en mantenimiento', label: 'En mantenimiento' },
+            { value: 'fuera de servicio', label: 'Fuera de servicio' }
+        ];
 
         const schemas = {
             'pacientes': {
+                title: 'Listado de Pacientes',
                 cols: ['ID', 'Documento', 'Nombres', 'Apellidos', 'Edad', 'Género', 'EPS', 'Acciones'],
                 fields: [
                     { name: 'documento', label: 'Número de Documento', type: 'number_only', required: true },
@@ -136,31 +106,36 @@
                 ]
             },
             'tipos-signo': {
+                title: 'Listado de Tipos de Signo',
                 cols: ['ID', 'Nombre de Signo', 'Unidad de Medida', 'Mínimo Normal', 'Máximo Normal', 'Acciones'],
                 fields: [
                     { name: 'nombre', label: 'Nombre del Signo Vital', type: 'letters_only', required: true },
-                    { name: 'unidad_medida', label: 'Unidad de Medida (ej. mmHg, °C, bpm)', type: 'text', required: true },
+                    { name: 'unidad_medida', label: 'Unidad de Medida (ej. mmHg, °C, lpm)', type: 'text', required: true },
                     { name: 'valor_min_normal', label: 'Valor Mínimo Normal', type: 'decimal', required: true },
                     { name: 'valor_max_normal', label: 'Valor Máximo Normal', type: 'decimal', required: true }
                 ]
             },
             'dispositivos': {
+                title: 'Listado de Dispositivos',
                 cols: ['ID', 'Nombre Dispositivo', 'Marca', 'Modelo', 'N° Serie', 'Estado', 'Acciones'],
                 fields: [
                     { name: 'nombre', label: 'Nombre del Dispositivo', type: 'text', required: true },
                     { name: 'marca', label: 'Marca', type: 'text', required: true },
                     { name: 'modelo', label: 'Modelo', type: 'text', required: true },
                     { name: 'numero_serie', label: 'Número de Serie', type: 'text', required: true },
-                    { name: 'estado', label: 'Estado', type: 'select_static', options: ['Disponible', 'En uso', 'Mantenimiento', 'Inactivo'], required: true }
+                    { name: 'estado', label: 'Estado', type: 'select_static', options: ESTADOS_DISPOSITIVO, required: true }
                 ]
             },
-            'registros-signo': {
-                cols: ['ID', 'Paciente', 'Tipo Signo', 'Dispositivo', 'Valor Medido', 'Rango de Referencia', 'Estado', 'Fecha y Hora', 'Acciones'],
+            'registros': {
+                title: 'Listado de Registros de Signos',
+                cols: ['ID', 'Paciente', 'Tipo Signo', 'Dispositivo', 'Valor Medido', 'Rango de Referencia', 'Estado', 'Fecha y Hora', 'Responsable', 'Acciones'],
                 fields: [
                     { name: 'paciente', label: 'Seleccionar Paciente Existente', type: 'select_api', endpoint: 'pacientes', displayKey: (item) => `${item.nombres} ${item.apellidos} - Doc: ${item.documento}`, required: true },
                     { name: 'tipo_signo', label: 'Seleccionar Signo Vital', type: 'select_api', endpoint: 'tipos-signo', displayKey: (item) => `${item.nombre} (${item.unidad_medida})`, required: true },
-                    { name: 'dispositivo', label: 'Seleccionar Dispositivo', type: 'select_api', endpoint: 'dispositivos', displayKey: (item) => `${item.nombre} [${item.marca} - ${item.numero_serie}]`, required: true },
-                    { name: 'valor', label: 'Valor Medido', type: 'decimal', required: true }
+                    // Solo dispositivos activos (o el ya asignado al editar un registro antiguo)
+                    { name: 'dispositivo', label: 'Seleccionar Dispositivo (solo activos)', type: 'select_api', endpoint: 'dispositivos', onlyActive: true, displayKey: (item) => `${item.nombre} [${item.marca} - ${item.numero_serie}]`, required: true },
+                    { name: 'valor_medido', label: 'Valor Medido', type: 'decimal', required: true },
+                    { name: 'responsable', label: 'Responsable (quien toma la medición)', type: 'text', required: true }
                 ]
             }
         };
@@ -168,7 +143,6 @@
         function switchTab(tab) {
             closeModal();
             currentTab = tab;
-            
             document.querySelectorAll('[id^="tab-"]').forEach(btn => {
                 btn.className = "px-6 py-3.5 font-semibold text-slate-500 hover:text-teal-700 transition-all";
             });
@@ -176,35 +150,40 @@
             if (activeBtn) {
                 activeBtn.className = "px-6 py-3.5 font-semibold text-teal-700 border-b-2 border-teal-700 bg-teal-50/50 transition-all";
             }
-            
-            document.getElementById('section-title').innerText = `Listado de ${tab.replace('-', ' ')}`;
+            document.getElementById('section-title').innerText = schemas[tab].title;
             loadData();
         }
 
-        async function loadData() {
-            try {
-                // Precargamos tipos-signo para garantizar comparaciones exactas
-                if (currentTab === 'registros-signo' || currentTab === 'tipos-signo') {
-                    try {
-                        const tRes = await fetch(`${API_URL}/tipos-signo/`);
-                        if (tRes.ok) {
-                            const tData = await tRes.json();
-                            tiposSignoMap = {};
-                            tData.forEach(t => tiposSignoMap[t.id] = t);
-                        }
-                    } catch (e) {
-                        console.warn("No se pudo cargar el catálogo de signos", e);
-                    }
-                }
+        function setApiStatus(ok) {
+            const el = document.getElementById('api-status');
+            el.innerText = ok ? '🟢 API Conectada' : '🔴 API sin conexión';
+        }
 
+        function escapeHtml(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // Convierte {campo: ["mensaje"]} de DRF en texto legible
+        function formatErrors(data) {
+            if (typeof data === 'string') return data;
+            if (data.detail) return data.detail;
+            return Object.entries(data).map(([campo, msgs]) => {
+                const texto = Array.isArray(msgs) ? msgs.join(' ') : String(msgs);
+                return campo === 'non_field_errors' ? texto : `${campo}: ${texto}`;
+            }).join('\n');
+        }
+
+        async function loadData() {
+            const tbody = document.getElementById('table-body');
+            try {
                 const res = await fetch(`${API_URL}/${currentTab}/`);
                 if (!res.ok) throw new Error("Error al obtener datos");
                 const data = await res.json();
-                
-                const thead = document.getElementById('table-head');
-                thead.innerHTML = schemas[currentTab].cols.map(c => `<th class="border border-slate-300 p-3.5 font-bold text-slate-700 uppercase bg-slate-100 text-xs">${c}</th>`).join('');
+                setApiStatus(true);
 
-                const tbody = document.getElementById('table-body');
+                document.getElementById('table-head').innerHTML = schemas[currentTab].cols.map(c =>
+                    `<th class="border border-slate-300 p-3.5 font-bold text-slate-700 uppercase bg-slate-100 text-xs">${c}</th>`).join('');
+
                 if (!Array.isArray(data) || data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="${schemas[currentTab].cols.length}" class="p-8 text-center text-slate-400 italic">No existen registros guardados.</td></tr>`;
                     return;
@@ -224,157 +203,139 @@
                 `).join('');
             } catch (err) {
                 console.error("Error al cargar datos:", err);
+                setApiStatus(false);
+                tbody.innerHTML = `<tr><td colspan="${schemas[currentTab].cols.length}" class="p-8 text-center text-rose-500">No se pudo conectar con la API. Verifica que el servidor Django esté activo.</td></tr>`;
             }
+        }
+
+        function badgeEstadoDispositivo(estado) {
+            const colores = {
+                'activo': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                'en mantenimiento': 'bg-amber-100 text-amber-800 border-amber-300',
+                'fuera de servicio': 'bg-rose-100 text-rose-800 border-rose-300'
+            };
+            const cls = colores[estado] || 'bg-slate-100 text-slate-700 border-slate-300';
+            return `<span class="${cls} font-medium px-2 py-0.5 rounded text-xs border">${escapeHtml(estado)}</span>`;
+        }
+
+        function badgeEstadoValor(estado) {
+            const map = {
+                'normal': ['bg-emerald-100 text-emerald-800 border-emerald-300', '🟢 Normal'],
+                'bajo':   ['bg-amber-100 text-amber-800 border-amber-300', '🟡 Bajo'],
+                'alto':   ['bg-rose-100 text-rose-800 border-rose-300', '🔴 Alto']
+            };
+            const m = map[estado];
+            if (!m) return '<span class="bg-slate-100 text-slate-500 font-medium text-xs px-2 py-1 rounded">Sin Ref.</span>';
+            return `<span class="${m[0]} border font-bold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1">${m[1]}</span>`;
         }
 
         function renderRowCells(item) {
             if (currentTab === 'pacientes') {
                 return `
-                    <td class="p-3.5 font-mono text-xs text-slate-700 border border-slate-200">${item.documento}</td>
-                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombres}</td>
-                    <td class="p-3.5 text-slate-700 border border-slate-200">${item.apellidos}</td>
+                    <td class="p-3.5 font-mono text-xs text-slate-700 border border-slate-200">${escapeHtml(item.documento)}</td>
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${escapeHtml(item.nombres)}</td>
+                    <td class="p-3.5 text-slate-700 border border-slate-200">${escapeHtml(item.apellidos)}</td>
                     <td class="p-3.5 text-slate-600 border border-slate-200">${item.edad} años</td>
-                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.genero}</td>
-                    <td class="p-3.5 border border-slate-200"><span class="bg-teal-50 text-teal-700 font-medium px-2 py-1 rounded border border-teal-200 text-xs">${item.eps}</span></td>`;
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${escapeHtml(item.genero)}</td>
+                    <td class="p-3.5 border border-slate-200"><span class="bg-teal-50 text-teal-700 font-medium px-2 py-1 rounded border border-teal-200 text-xs">${escapeHtml(item.eps)}</span></td>`;
             } else if (currentTab === 'tipos-signo') {
                 return `
-                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombre}</td>
-                    <td class="p-3.5 font-mono text-xs text-teal-700 font-bold border border-slate-200 bg-teal-50/30">${item.unidad_medida}</td>
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${escapeHtml(item.nombre)}</td>
+                    <td class="p-3.5 font-mono text-xs text-teal-700 font-bold border border-slate-200 bg-teal-50/30">${escapeHtml(item.unidad_medida)}</td>
                     <td class="p-3.5 text-slate-700 font-medium border border-slate-200 text-center">${item.valor_min_normal}</td>
                     <td class="p-3.5 text-slate-700 font-medium border border-slate-200 text-center">${item.valor_max_normal}</td>`;
             } else if (currentTab === 'dispositivos') {
                 return `
-                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${item.nombre}</td>
-                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.marca}</td>
-                    <td class="p-3.5 text-slate-600 border border-slate-200">${item.modelo}</td>
-                    <td class="p-3.5 font-mono text-xs text-slate-500 border border-slate-200">${item.numero_serie}</td>
-                    <td class="p-3.5 border border-slate-200"><span class="bg-slate-100 text-slate-700 font-medium px-2 py-0.5 rounded text-xs border border-slate-300">${item.estado}</span></td>`;
-            } else if (currentTab === 'registros-signo') {
-                const pac = item.paciente_detalle ? `${item.paciente_detalle.nombres} ${item.paciente_detalle.apellidos}` : `Paciente #${item.paciente}`;
-                const tipoObj = item.tipo_signo_detalle || tiposSignoMap[item.tipo_signo];
-                const tipoNombre = tipoObj ? tipoObj.nombre : `Signo #${item.tipo_signo}`;
-                const disp = item.dispositivo_detalle ? item.dispositivo_detalle.nombre : `Dispositivo #${item.dispositivo}`;
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${escapeHtml(item.nombre)}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${escapeHtml(item.marca)}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${escapeHtml(item.modelo)}</td>
+                    <td class="p-3.5 font-mono text-xs text-slate-500 border border-slate-200">${escapeHtml(item.numero_serie)}</td>
+                    <td class="p-3.5 border border-slate-200">${badgeEstadoDispositivo(item.estado)}</td>`;
+            } else if (currentTab === 'registros') {
+                // La API devuelve el detalle anidado de cada relación
+                const p = item.paciente_detalle, t = item.tipo_signo_detalle, d = item.dispositivo_detalle;
+                const pac = p ? `${p.nombres} ${p.apellidos}` : `Paciente #${item.paciente}`;
+                const tipoNombre = t ? t.nombre : `Signo #${item.tipo_signo}`;
+                const disp = d ? d.nombre : `Dispositivo #${item.dispositivo}`;
+                const unidad = t ? t.unidad_medida : '';
+                const rangoStr = t ? `${t.valor_min_normal} - ${t.valor_max_normal} ${unidad}` : 'N/A';
                 const fecha = item.fecha_hora ? new Date(item.fecha_hora).toLocaleString() : 'N/A';
 
-                let unidad = tipoObj ? tipoObj.unidad_medida : '';
-                let rangoStr = 'N/A';
-                let estadoBadge = '<span class="bg-slate-100 text-slate-500 font-medium text-xs px-2 py-1 rounded">Sin Ref.</span>';
-
-                if (tipoObj && tipoObj.valor_min_normal !== undefined && tipoObj.valor_max_normal !== undefined) {
-                    const min = tipoObj.valor_min_normal;
-                    const max = tipoObj.valor_max_normal;
-                    rangoStr = `${min} - ${max} ${unidad}`;
-
-                    const val = Number(item.valor);
-                    if (val >= min && val <= max) {
-                        estadoBadge = '<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1">🟢 Normal</span>';
-                    } else {
-                        estadoBadge = '<span class="bg-rose-100 text-rose-800 border border-rose-300 font-bold text-xs px-2.5 py-1 rounded-full inline-flex items-center gap-1">🔴 Fuera de rango</span>';
-                    }
-                }
-
                 return `
-                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${pac}</td>
-                    <td class="p-3.5 text-slate-700 border border-slate-200">${tipoNombre}</td>
-                    <td class="p-3.5 text-slate-600 border border-slate-200">${disp}</td>
-                    <td class="p-3.5 font-bold text-teal-800 text-base border border-slate-200 bg-teal-50/30">${item.valor} <span class="text-xs font-normal text-teal-600">${unidad}</span></td>
-                    <td class="p-3.5 font-mono text-xs text-slate-600 border border-slate-200">${rangoStr}</td>
-                    <td class="p-3.5 border border-slate-200">${estadoBadge}</td>
-                    <td class="p-3.5 text-xs text-slate-500 font-mono border border-slate-200">${fecha}</td>`;
+                    <td class="p-3.5 font-semibold text-slate-800 border border-slate-200">${escapeHtml(pac)}</td>
+                    <td class="p-3.5 text-slate-700 border border-slate-200">${escapeHtml(tipoNombre)}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${escapeHtml(disp)}</td>
+                    <td class="p-3.5 font-bold text-teal-800 text-base border border-slate-200 bg-teal-50/30">${item.valor_medido} <span class="text-xs font-normal text-teal-600">${escapeHtml(unidad)}</span></td>
+                    <td class="p-3.5 font-mono text-xs text-slate-600 border border-slate-200">${escapeHtml(rangoStr)}</td>
+                    <td class="p-3.5 border border-slate-200">${badgeEstadoValor(item.estado_valor)}</td>
+                    <td class="p-3.5 text-xs text-slate-500 font-mono border border-slate-200">${fecha}</td>
+                    <td class="p-3.5 text-slate-600 border border-slate-200">${escapeHtml(item.responsable)}</td>`;
             }
         }
+
+        function optValue(o) { return typeof o === 'string' ? o : o.value; }
+        function optLabel(o) { return typeof o === 'string' ? o : o.label; }
 
         async function openModal(id = null) {
             editId = id;
-            document.getElementById('modal-title').innerText = id ? `Editar Registro en ${currentTab.replace('-', ' ')}` : `Nuevo Registro en ${currentTab.replace('-', ' ')}`;
+            const nombreSeccion = schemas[currentTab].title.replace('Listado de ', '');
+            document.getElementById('modal-title').innerText = id ? `Editar: ${nombreSeccion}` : `Nuevo: ${nombreSeccion}`;
             const fieldsContainer = document.getElementById('form-fields');
             fieldsContainer.innerHTML = `<p class="text-xs text-slate-400 italic p-2">Cargando opciones...</p>`;
-
-            const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
+            document.getElementById('modal').style.display = 'flex';
 
             let itemData = {};
-            if (id) {
-                const res = await fetch(`${API_URL}/${currentTab}/${id}/`);
-                itemData = await res.json();
+            try {
+                if (id) {
+                    const res = await fetch(`${API_URL}/${currentTab}/${id}/`);
+                    itemData = await res.json();
+                }
+
+                let fieldsHTML = '';
+                for (const f of schemas[currentTab].fields) {
+                    const raw = itemData[f.name] !== undefined ? itemData[f.name] : '';
+                    const val = escapeHtml(raw);
+                    const req = f.required ? 'required' : '';
+                    const label = `<label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>`;
+                    const inputCls = "w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none";
+
+                    if (f.type === 'letters_only') {
+                        fieldsHTML += `<div>${label}<input type="text" id="field-${f.name}" value="${val}"
+                            oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g, '')"
+                            placeholder="Solo letras" class="${inputCls}" ${req} /></div>`;
+                    } else if (f.type === 'number_only') {
+                        fieldsHTML += `<div>${label}<input type="text" id="field-${f.name}" value="${val}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            placeholder="Solo números enteros" class="${inputCls}" ${req} /></div>`;
+                    } else if (f.type === 'decimal') {
+                        fieldsHTML += `<div>${label}<input type="number" step="any" id="field-${f.name}" value="${val}"
+                            placeholder="Ej. 36.5" class="${inputCls}" ${req} /></div>`;
+                    } else if (f.type === 'select_static') {
+                        const opts = f.options.map(o => `<option value="${escapeHtml(optValue(o))}" ${raw === optValue(o) ? 'selected' : ''}>${escapeHtml(optLabel(o))}</option>`).join('');
+                        fieldsHTML += `<div>${label}<select id="field-${f.name}" class="${inputCls} bg-white" ${req}>
+                            <option value="" disabled ${!raw ? 'selected' : ''}>-- Seleccione una opción --</option>${opts}</select></div>`;
+                    } else if (f.type === 'select_api') {
+                        const apiRes = await fetch(`${API_URL}/${f.endpoint}/`);
+                        let apiData = await apiRes.json();
+                        if (f.onlyActive) {
+                            apiData = apiData.filter(item => item.estado === 'activo' || item.id === raw);
+                        }
+                        const opts = apiData.map(item => `<option value="${item.id}" ${raw === item.id ? 'selected' : ''}>${escapeHtml(f.displayKey(item))}</option>`).join('');
+                        const vacio = apiData.length === 0 ? '-- No hay opciones disponibles --' : '-- Seleccione de la lista existente --';
+                        fieldsHTML += `<div>${label}<select id="field-${f.name}" class="${inputCls} bg-white" ${req}>
+                            <option value="" disabled ${!raw ? 'selected' : ''}>${vacio}</option>${opts}</select></div>`;
+                    } else {
+                        fieldsHTML += `<div>${label}<input type="text" id="field-${f.name}" value="${val}" class="${inputCls}" ${req} /></div>`;
+                    }
+                }
+                fieldsContainer.innerHTML = fieldsHTML;
+            } catch (err) {
+                fieldsContainer.innerHTML = `<p class="text-sm text-rose-500 p-2">No se pudo cargar el formulario. Verifica que la API esté activa.</p>`;
             }
-
-            let fieldsHTML = '';
-
-            for (const f of schemas[currentTab].fields) {
-                const val = itemData[f.name] !== undefined ? itemData[f.name] : '';
-
-                if (f.type === 'letters_only') {
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <input type="text" id="field-${f.name}" value="${val}" 
-                                oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]/g, '')"
-                                placeholder="Solo letras" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
-                        </div>`;
-                } 
-                else if (f.type === 'number_only') {
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <input type="text" id="field-${f.name}" value="${val}" 
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                placeholder="Solo números enteros" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
-                        </div>`;
-                }
-                else if (f.type === 'decimal') {
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <input type="number" step="any" id="field-${f.name}" value="${val}" 
-                                placeholder="Ej. 36.5" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
-                        </div>`;
-                }
-                else if (f.type === 'select_static') {
-                    const opts = f.options.map(o => `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`).join('');
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <select id="field-${f.name}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm bg-white focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''}>
-                                <option value="" disabled ${!val ? 'selected' : ''}>-- Seleccione una opción --</option>
-                                ${opts}
-                            </select>
-                        </div>`;
-                }
-                else if (f.type === 'select_api') {
-                    const apiRes = await fetch(`${API_URL}/${f.endpoint}/`);
-                    const apiData = await apiRes.json();
-                    
-                    const opts = apiData.map(item => `
-                        <option value="${item.id}" ${val === item.id ? 'selected' : ''}>
-                            ${f.displayKey(item)}
-                        </option>
-                    `).join('');
-
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <select id="field-${f.name}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm bg-white focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''}>
-                                <option value="" disabled ${!val ? 'selected' : ''}>-- Seleccione de la lista existente --</option>
-                                ${opts}
-                            </select>
-                        </div>`;
-                }
-                else {
-                    fieldsHTML += `
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">${f.label}</label>
-                            <input type="text" id="field-${f.name}" value="${val}" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none" ${f.required ? 'required' : ''} />
-                        </div>`;
-                }
-            }
-
-            fieldsContainer.innerHTML = fieldsHTML;
         }
 
         function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
             document.getElementById('dynamic-form').reset();
             editId = null;
         }
@@ -382,20 +343,19 @@
         async function handleSubmit(e) {
             e.preventDefault();
             const btnSave = document.getElementById('btn-save');
-            
             const payload = {};
             let isFormValid = true;
 
             schemas[currentTab].fields.forEach(f => {
                 const el = document.getElementById(`field-${f.name}`);
                 const rawVal = el ? el.value.trim() : '';
+                if (f.required && !rawVal) isFormValid = false;
 
-                if (f.required && !rawVal) {
-                    isFormValid = false;
-                }
-
-                if (f.type === 'number_only' || f.type === 'select_api') {
+                if (f.type === 'select_api') {
                     payload[f.name] = rawVal ? Number(rawVal) : null;
+                } else if (f.type === 'number_only') {
+                    // El documento se envía como texto (el modelo lo guarda como CharField)
+                    payload[f.name] = f.name === 'documento' ? rawVal : (rawVal ? Number(rawVal) : null);
                 } else if (f.type === 'decimal') {
                     payload[f.name] = rawVal ? parseFloat(rawVal) : null;
                 } else {
@@ -423,10 +383,9 @@
 
                 if (!res.ok) {
                     const errorData = await res.json();
-                    alert("⚠️ Error de Validación en Django:\n\n" + JSON.stringify(errorData, null, 2));
+                    alert("⚠️ No se pudo guardar:\n\n" + formatErrors(errorData));
                     return;
                 }
-
                 closeModal();
                 loadData();
             } catch (err) {
@@ -438,9 +397,17 @@
         }
 
         async function deleteItem(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este registro permanentemente?')) {
-                await fetch(`${API_URL}/${currentTab}/${id}/`, { method: 'DELETE' });
+            if (!confirm('¿Estás seguro de que deseas eliminar este registro permanentemente?')) return;
+            try {
+                const res = await fetch(`${API_URL}/${currentTab}/${id}/`, { method: 'DELETE' });
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
+                    alert("⚠️ " + (formatErrors(errorData) || "No se pudo eliminar el registro."));
+                    return;
+                }
                 loadData();
+            } catch (err) {
+                alert("❌ No se pudo conectar con el servidor Django. Verifica que esté activo.");
             }
         }
 

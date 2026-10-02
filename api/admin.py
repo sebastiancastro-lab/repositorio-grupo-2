@@ -12,7 +12,9 @@ class TipoSignoAdmin(admin.ModelAdmin):
 @admin.register(Dispositivo)
 class DispositivoAdmin(admin.ModelAdmin):
     list_display = ('id', 'nombre', 'marca', 'modelo', 'numero_serie', 'estado')
+    list_filter = ('estado',)
 
 @admin.register(RegistroSigno)
 class RegistroSignoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'paciente', 'tipo_signo', 'dispositivo', 'valor', 'fecha_hora')
+    list_display = ('id', 'paciente', 'tipo_signo', 'dispositivo', 'valor_medido', 'fecha_hora', 'responsable')
+    list_filter = ('tipo_signo', 'dispositivo')

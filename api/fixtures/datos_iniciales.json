@@ -1,0 +1,314 @@
+[
+  {
+    "model": "api.paciente",
+    "pk": 1,
+    "fields": {
+      "documento": "1017234501",
+      "nombres": "Laura Sofía",
+      "apellidos": "Ramírez Gómez",
+      "edad": 34,
+      "genero": "Femenino",
+      "eps": "Sura"
+    }
+  },
+  {
+    "model": "api.paciente",
+    "pk": 2,
+    "fields": {
+      "documento": "98765432",
+      "nombres": "Carlos Andrés",
+      "apellidos": "Pérez Londoño",
+      "edad": 58,
+      "genero": "Masculino",
+      "eps": "Nueva EPS"
+    }
+  },
+  {
+    "model": "api.paciente",
+    "pk": 3,
+    "fields": {
+      "documento": "1020456789",
+      "nombres": "María Fernanda",
+      "apellidos": "Torres Cano",
+      "edad": 27,
+      "genero": "Femenino",
+      "eps": "Sanitas"
+    }
+  },
+  {
+    "model": "api.paciente",
+    "pk": 4,
+    "fields": {
+      "documento": "71345678",
+      "nombres": "Juan David",
+      "apellidos": "Muñoz Restrepo",
+      "edad": 45,
+      "genero": "Masculino",
+      "eps": "Salud Total"
+    }
+  },
+  {
+    "model": "api.paciente",
+    "pk": 5,
+    "fields": {
+      "documento": "43876210",
+      "nombres": "Gloria Inés",
+      "apellidos": "Vélez Zapata",
+      "edad": 72,
+      "genero": "Femenino",
+      "eps": "Compensar"
+    }
+  },
+  {
+    "model": "api.tiposigno",
+    "pk": 1,
+    "fields": {
+      "nombre": "Frecuencia Cardíaca",
+      "unidad_medida": "lpm",
+      "valor_min_normal": 60,
+      "valor_max_normal": 100
+    }
+  },
+  {
+    "model": "api.tiposigno",
+    "pk": 2,
+    "fields": {
+      "nombre": "Presión Arterial Sistólica",
+      "unidad_medida": "mmHg",
+      "valor_min_normal": 90,
+      "valor_max_normal": 120
+    }
+  },
+  {
+    "model": "api.tiposigno",
+    "pk": 3,
+    "fields": {
+      "nombre": "Temperatura Corporal",
+      "unidad_medida": "°C",
+      "valor_min_normal": 36.1,
+      "valor_max_normal": 37.2
+    }
+  },
+  {
+    "model": "api.tiposigno",
+    "pk": 4,
+    "fields": {
+      "nombre": "Saturación de Oxígeno",
+      "unidad_medida": "%",
+      "valor_min_normal": 95,
+      "valor_max_normal": 100
+    }
+  },
+  {
+    "model": "api.dispositivo",
+    "pk": 1,
+    "fields": {
+      "nombre": "Monitor multiparámetro",
+      "marca": "Philips",
+      "modelo": "IntelliVue MX450",
+      "numero_serie": "PH-MX450-0001",
+      "estado": "activo"
+    }
+  },
+  {
+    "model": "api.dispositivo",
+    "pk": 2,
+    "fields": {
+      "nombre": "Tensiómetro digital",
+      "marca": "Omron",
+      "modelo": "HEM-7120",
+      "numero_serie": "OM-7120-0042",
+      "estado": "activo"
+    }
+  },
+  {
+    "model": "api.dispositivo",
+    "pk": 3,
+    "fields": {
+      "nombre": "Termómetro infrarrojo",
+      "marca": "Braun",
+      "modelo": "ThermoScan 7",
+      "numero_serie": "BR-IRT6520-0310",
+      "estado": "activo"
+    }
+  },
+  {
+    "model": "api.dispositivo",
+    "pk": 4,
+    "fields": {
+      "nombre": "Oxímetro de pulso",
+      "marca": "Masimo",
+      "modelo": "Rad-5",
+      "numero_serie": "MS-RAD5-0077",
+      "estado": "en mantenimiento"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 1,
+    "fields": {
+      "paciente": 1,
+      "tipo_signo": 1,
+      "dispositivo": 1,
+      "valor_medido": 78,
+      "fecha_hora": "2026-09-28T08:00:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 2,
+    "fields": {
+      "paciente": 1,
+      "tipo_signo": 2,
+      "dispositivo": 2,
+      "valor_medido": 115,
+      "fecha_hora": "2026-09-28T08:05:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 3,
+    "fields": {
+      "paciente": 1,
+      "tipo_signo": 3,
+      "dispositivo": 3,
+      "valor_medido": 36.6,
+      "fecha_hora": "2026-09-28T08:10:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 4,
+    "fields": {
+      "paciente": 1,
+      "tipo_signo": 4,
+      "dispositivo": 1,
+      "valor_medido": 98,
+      "fecha_hora": "2026-09-28T08:15:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 5,
+    "fields": {
+      "paciente": 2,
+      "tipo_signo": 1,
+      "dispositivo": 1,
+      "valor_medido": 112,
+      "fecha_hora": "2026-09-28T09:30:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 6,
+    "fields": {
+      "paciente": 2,
+      "tipo_signo": 2,
+      "dispositivo": 2,
+      "valor_medido": 148,
+      "fecha_hora": "2026-09-28T09:35:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 7,
+    "fields": {
+      "paciente": 2,
+      "tipo_signo": 4,
+      "dispositivo": 1,
+      "valor_medido": 94,
+      "fecha_hora": "2026-09-28T09:40:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 8,
+    "fields": {
+      "paciente": 3,
+      "tipo_signo": 3,
+      "dispositivo": 3,
+      "valor_medido": 38.4,
+      "fecha_hora": "2026-09-29T14:20:00-05:00",
+      "responsable": "Dr. Andrés Mejía"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 9,
+    "fields": {
+      "paciente": 3,
+      "tipo_signo": 1,
+      "dispositivo": 1,
+      "valor_medido": 104,
+      "fecha_hora": "2026-09-29T14:25:00-05:00",
+      "responsable": "Dr. Andrés Mejía"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 10,
+    "fields": {
+      "paciente": 4,
+      "tipo_signo": 2,
+      "dispositivo": 2,
+      "valor_medido": 118,
+      "fecha_hora": "2026-09-30T07:45:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 11,
+    "fields": {
+      "paciente": 4,
+      "tipo_signo": 1,
+      "dispositivo": 1,
+      "valor_medido": 72,
+      "fecha_hora": "2026-09-30T07:50:00-05:00",
+      "responsable": "Enf. Carolina Restrepo"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 12,
+    "fields": {
+      "paciente": 5,
+      "tipo_signo": 4,
+      "dispositivo": 1,
+      "valor_medido": 92,
+      "fecha_hora": "2026-09-30T11:10:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 13,
+    "fields": {
+      "paciente": 5,
+      "tipo_signo": 1,
+      "dispositivo": 1,
+      "valor_medido": 56,
+      "fecha_hora": "2026-09-30T11:15:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  },
+  {
+    "model": "api.registrosigno",
+    "pk": 14,
+    "fields": {
+      "paciente": 5,
+      "tipo_signo": 3,
+      "dispositivo": 3,
+      "valor_medido": 36.4,
+      "fecha_hora": "2026-10-01T06:50:00-05:00",
+      "responsable": "Enf. Julián Osorio"
+    }
+  }
+]
