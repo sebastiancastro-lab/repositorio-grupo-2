@@ -6,22 +6,6 @@ API REST construida con **Django** y **Django REST Framework (DRF)**, con base d
 
 El repositorio incluye también un frontend de prueba (`index.html`) que consume la API.
 
-## Contenido
-
-1. [Equipo](#equipo)
-2. [Tecnologías](#tecnologías)
-3. [Estructura del proyecto](#estructura-del-proyecto)
-4. [Instalación y ejecución](#instalación-y-ejecución)
-5. [Frontend de prueba](#frontend-de-prueba)
-6. [Modelo de datos](#modelo-de-datos)
-7. [Base de datos precargada](#base-de-datos-precargada)
-8. [Endpoints](#endpoints)
-9. [Reglas de validación](#reglas-de-validación)
-10. [Pruebas](#pruebas)
-11. [Flujo de trabajo en Git](#flujo-de-trabajo-en-git)
-12. [Solución de problemas](#solución-de-problemas)
-
----
 
 ## Equipo
 
