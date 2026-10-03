@@ -11,7 +11,7 @@ El repositorio incluye también un frontend de prueba (`index.html`) que consume
 
 | Integrante | Recurso | Rama |
 | --- | --- | --- |
-| Paula Andrea Castaño | Paciente | `feature/paciente` |
+| Paula Andrea Cataño | Paciente | `feature/paciente` |
 | Lizeth Giraldo | TipoSigno | `feature/tipo-signo` |
 | Todos | Dispositivo | `feature/dispositivo` |
 | Juan Sebastian Castro | RegistroSigno | `feature/registro-signo` |
