@@ -105,7 +105,7 @@ repositorio-grupo-2/
    python manage.py runserver
    ```
 
-La API queda disponible en **http://127.0.0.1:8000/api/**. Puedes probarla con la interfaz navegable de DRF (abriendo esa URL en el navegador), con Postman o con el frontend de prueba.
+La API queda disponible en **http://127.0.0.1:8000/api/**. Puedes probarla con la interfaz navegable de DRF o con el frontend de prueba.
 
 La conexión a la base de datos está en `config/settings.py`:
 
@@ -116,20 +116,14 @@ La conexión a la base de datos está en `config/settings.py`:
 | Contraseña | *(vacía)* |
 | Host / Puerto | `localhost` / `3306` |
 
-> Si tu MySQL tiene contraseña, cámbiala en `DATABASES['default']['PASSWORD']`.
-
-El panel de administración de Django está en `/admin/` (para usarlo, crea un usuario con `python manage.py createsuperuser`).
-
----
 
 ## Frontend de prueba
 
-`index.html` es una página estática con cuatro pestañas: **Pacientes**, **Tipos de Signo**, **Dispositivos** y **Registros de Signos**. Permite listar, crear, editar y eliminar registros de cada recurso. En Registros muestra el estado de cada medición (🟢 Normal, 🟡 Bajo, 🔴 Alto) a partir del campo calculado `estado_valor` de la API, y al registrar solo permite elegir dispositivos activos.
+`index.html` es una página con cuatro pestañas: **Pacientes**, **Tipos de Signo**, **Dispositivos** y **Registros de Signos**. Permite listar, crear, editar y eliminar registros de cada recurso. En Registros muestra el estado de cada medición (Normal,Bajo,Alto) a partir del campo calculado `estado_valor` de la API, y al registrar solo permite elegir dispositivos activos.
 
-Con el servidor de Django en marcha, ábrelo de cualquiera de estas formas:
+Con el servidor de Django en marcha, ábrelo asi:
 
-- Haciendo doble clic sobre `index.html`.
-- O desde otra terminal, en la carpeta del proyecto:
+- Desde otra terminal, en la carpeta del proyecto:
 
   ```powershell
   python -m http.server 5500
@@ -198,10 +192,6 @@ El archivo `api/fixtures/datos_iniciales.json` contiene:
 | Registros de signos | 14 | Incluye valores normales, altos y bajos |
 
 Se carga con `python manage.py loaddata datos_iniciales` sobre una base de datos recién migrada. Usa ids fijos: si ya existen filas con los mismos ids, se sobrescriben.
-
-> Git guarda el código, no el contenido de tu base de datos. Por eso cada integrante debe ejecutar `migrate` y `loaddata` en su propio XAMPP.
-
----
 
 ## Endpoints
 
@@ -358,31 +348,3 @@ Cada integrante modifica solo los archivos de su recurso dentro de `api/`:
 Cada vez que alguien modifique `api/models.py`, debe ejecutar localmente `python manage.py makemigrations` y `python manage.py migrate`, y avisar al equipo antes de subir una migración nueva para evitar conflictos.
 
 ---
-
-## Solución de problemas
-
-**`Can't connect to MySQL server on 'localhost'` (WinError 10061)**
-MySQL no está iniciado. Abre XAMPP y pulsa *Start* en MySQL. Si no queda en verde, revisa *Logs*: puede haber otro MySQL usando el puerto 3306.
-
-**`Unknown database 'bd_grupo_2'`**
-Falta crear la base de datos. Créala vacía en phpMyAdmin con ese nombre exacto.
-
-**`migrate` falla con errores como `Can't DROP COLUMN` o `table already exists`**
-La base quedó a medias por un intento anterior (MySQL no revierte cambios de estructura cuando una migración falla). Recréala vacía desde la pestaña *SQL* de phpMyAdmin y repite los pasos 6 y 7:
-
-```sql
-DROP DATABASE IF EXISTS bd_grupo_2;
-CREATE DATABASE bd_grupo_2 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-```
-
-**Las listas salen vacías o no aparecen los datos de ejemplo**
-La base de datos no viaja con Git. Ejecuta `python manage.py migrate` y luego `python manage.py loaddata datos_iniciales`.
-
-**El frontend no muestra datos**
-Verifica que `python manage.py runserver` esté activo y que http://127.0.0.1:8000/api/ responda.
-
-**El frontend se ve distinto o sin estilos**
-Revisa que tengas internet (Tailwind se carga por CDN), recarga con `Ctrl + F5` y confirma que estás en la última versión de `main` con `git checkout main` y `git pull origin main`.
-
-**Cambié un modelo y la base no se actualiza**
-Ejecuta `python manage.py makemigrations` y luego `python manage.py migrate`.
